@@ -12,4 +12,10 @@ node('linux'){
   stage('Build'){
     sh 'ant -f build.xml -v'
   }
+  
+  stage('Deploy'){
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS-Jenkins', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
+      s3Upload(file:'*.jar', bucket:'hmk10-github-jenkins', workingDir:'dist')
+    }
+  }
 }
